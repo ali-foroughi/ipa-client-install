@@ -177,6 +177,10 @@ systemctl restart sshd.service
 #enable APT proxy
 sed -i 's/#Acquire/Acquire/g' /etc/apt/apt.conf
 
+# Disalce Apprmor notifications for SSSD
+ln -sf /etc/apparmor.d/usr.sbin.sssd /etc/apparmor.d/disable/
+apparmor_parser -R /etc/apparmor.d/usr.sbin.sssd
+
 echo ""
 echo "*** setup complete ***"
 echo ""
