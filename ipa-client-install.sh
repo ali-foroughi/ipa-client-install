@@ -173,6 +173,7 @@ sleep 3
 #Restart services
 systemctl restart sssd.service
 systemctl restart sshd.service
+systemctl restart graylog-sidecar
 
 #enable APT proxy
 sed -i 's/#Acquire/Acquire/g' /etc/apt/apt.conf
