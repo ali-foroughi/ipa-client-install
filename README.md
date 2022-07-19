@@ -6,4 +6,4 @@ what you'll need:
 
 - Client name
 - Client IP
-- Domain nam (e.g yourdomain.com)
+- Domain name (e.g yourdomain.com)
