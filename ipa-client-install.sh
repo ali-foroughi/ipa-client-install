@@ -5,6 +5,9 @@ echo ""
 
 ### These values can be changed: 
 IPA="ipa.zcore.local"
+DOMAIN="zcore.local"
+NS1=172.20.11.12
+NS2=172.20.11.11
 
 #### functions ####
 
@@ -24,9 +27,22 @@ then
 fi 
 }
 
+check_pkg ()
+{
+    packages=("sssd" "sssd-tools" "libnss-sss" "libpam-sss" "ca-certificates" "krb5-user" "libnss3-tools" "libsss-sudo")
+    for package in "${packages[@]}"
+    do
+        if ! dpkg -l "$package" > /dev/null 2>&1; then
+            echo "$package is not installed."
+        else
+            printf "\xE2\x9C\x94 $package installed\n"
+        fi
+    done
+}
+
 #### Ask of user to specifiy client name and IP address ###
 
-read -p 'Specifiy client name (e.g srv15-mme-1):' CLIENT_NAME
+read -p 'Specifiy client name (e.g srv15-mme-1): ' CLIENT_NAME
 read -p 'Specifiy the client IP: ' CLIENT_IP
 check_input
 
@@ -43,19 +59,59 @@ then
     exit 0
 fi
 
+while true; do
+    read -p 'Do you want to configure an HTTP proxy for package installation? (y/n) ' yn
+    case $yn in
+        [Yy]* )
+            read -p "Please enter HTTP/HTTPS proxy IP address: " PROXY_IP
+            read -p "Please enter the port for the proxy: " PROXY_PORT
+            if ! grep -rwq '^Acquire::http' /etc/apt/; then
+                echo "Acquire::http { Proxy \"http://$PROXY_IP:$PROXY_PORT\"; };" > /etc/apt/apt.conf.d/00proxy
+                echo "Acquire::https { Proxy \"http://$PROXY_IP:$PROXY_PORT\"; };" >> /etc/apt/apt.conf.d/00proxy
+            else
+                echo "Proxy already configured."
+            fi
+            break;;
+        [Nn]* ) echo "Continuing..."
+        break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+
 ### set hostname
 
-hostnamectl set-hostname $CLIENT_NAME.zcore.local
+if [[ $(hostname) != "$CLIENT_NAME.$DOMAIN" ]]
+then
+    hostnamectl set-hostname $CLIENT_NAME.$DOMAIN
+    echo "===> Configuring hostname"
+else
+    printf "\xE2\x9C\x94 Hostname is correct\n"
+fi
+
 HOSTNAME=$(hostname)
 
 #Add hostname and IP entry to /etc/hosts
-echo ""
-echo "===> Copied IP and hostname to /etc/hosts"
-echo ""
-echo "$CLIENT_IP    $HOSTNAME" >> /etc/hosts
+if ! grep -rwq $(hostname) /etc/hosts
+then
+    echo "$CLIENT_IP    $HOSTNAME" >> /etc/hosts
+    echo "===> Copied IP and hostname to /etc/hosts"
+else
+    printf "\xE2\x9C\x94 IP and hostname found in /etc/hosts\n"
+fi
 
 #add nameserver 172.20.11.12 to /etc/resolv.conf
-sed -i '1s/^/nameserver 172.20.11.12\n/' /etc/resolv.conf
+
+if ! grep -rnwq $NS1 /etc/resolv.conf || ! grep -rnwq $NS2 /etc/resolv.conf
+then
+    sed -i '1s/^/nameserver '$NS1'\n/' /etc/resolv.conf
+    sed -i '1s/^/nameserver '$NS2'\n/' /etc/resolv.conf
+
+    echo "===> Added nameservers to /etc/resolv.conf"
+else
+    printf "\xE2\x9C\x94 Nameservers already configured\n"
+fi
+
 
 echo ""
 echo "===> checking connection to IPA server"
@@ -74,12 +130,11 @@ echo "===> Installing required packages ..."
 echo ""
 sleep 3
 
-#Disable APT proxy
-sed -i 's/Acquire/#Acquire/g' /etc/apt/apt.conf
 
 #install packages
 apt-get update
 apt-get install -y sssd sssd-tools libnss-sss libpam-sss ca-certificates krb5-user libnss3-tools libsss-sudo
+check_pkg
 
 echo ""
 echo "===> Adding public key to the server with the config files"
@@ -90,15 +145,14 @@ check_failure
 
 sleep3
 
-#copy sssd file /etc/sssd/sssd.conf  and make changes in hostname
+#copy sssd file /etc/sssd/sssd.conf and make changes 
 mkdir -p /etc/sssd/
-scp root@172.17.93.66:/etc/sssd/sssd.conf /etc/sssd
-sed -i "s/srv15-mme-7/$CLIENT_NAME/g" /etc/sssd/sssd.conf
+cp config_files/sssd.conf /etc/sssd
+sed -i "s/IPA_SERVER/$IPA/g" /etc/sssd/sssd.conf
+sed -i "s/IPA_DOMAIN/$DOMAIN/g" /etc/sssd/sssd.conf
+sed -i "s/HOSTNAME/$HOSTNAME/g" /etc/sssd/sssd.conf
 chmod 600 /etc/sssd/sssd.conf
-
-echo ""
-echo "===> SSSD configuration complete"
-echo ""
+printf "\xE2\x9C\x94 SSSD configuration complete\n"
 
 #copy the /etc/ipa/ca.crt file
 mkdir -p /etc/ipa/
