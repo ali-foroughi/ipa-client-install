@@ -64,24 +64,7 @@ read -p 'Enter nameserver 2: ' NS2
 read -p 'Specifiy client name (e.g srv15-mme-1): ' CLIENT_NAME
 read -p 'Specifiy the client IP: ' CLIENT_IP
 
-check_input
-
-##### verify client name and IP adderss ### 
-echo ""
-echo -e "Please verify the information: \n\nClient Name: $CLIENT_NAME \nServer IP: $CLIENT_IP \nIPA Server: $IPA \nDomain name: $DOMAIN"
-echo ""
-read -p "Contiue? (y/n): " INFO_VERIFY
-echo ""
-
-if [ $INFO_VERIFY == "n" ]
-then
-    echo "Abort."
-    exit 0
-fi
-
-
 # Configure HTTP proxy for APT
-
 while true; do
     read -p 'Do you want to configure an HTTP proxy for package installation? (y/n) ' yn
     case $yn in
@@ -100,6 +83,22 @@ while true; do
         * ) echo "Please answer yes or no.";;
     esac
 done
+
+check_input
+
+##### verify client name and IP adderss ### 
+echo ""
+echo -e "Please verify the information: \n\nClient Name: $CLIENT_NAME \nServer IP: $CLIENT_IP \nIPA Server: $IPA \nDomain name: $DOMAIN"
+echo ""
+read -p "Contiue? (y/n): " INFO_VERIFY
+echo ""
+
+if [ $INFO_VERIFY == "n" ]
+then
+    echo "Abort."
+    exit 0
+fi
+
 
 #add nameserver 172.20.11.12 to /etc/resolv.conf
 if ! grep -rnwq $NS1 /etc/resolv.conf || ! grep -rnwq $NS2 /etc/resolv.conf
