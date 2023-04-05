@@ -75,7 +75,7 @@ echo ""
 
 if [ $INFO_VERIFY == "n" ]
 then
-    echo "Canceling configuration. Exiting"
+    echo "Abort."
     exit 0
 fi
 
