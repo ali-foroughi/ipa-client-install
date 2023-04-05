@@ -2,10 +2,11 @@
 
 set -e
 
-echo "############################################"
-echo "### Configuring IPA client on Debian 11 ####"
-echo "############################################"
 echo ""
+echo "Configuring IPA client on Debian 11"
+echo "-----------------------------------"
+echo ""
+
 
 ### These values can be changed: 
 IPA="ipa.zcore.local"
@@ -264,5 +265,4 @@ systemctl restart sssd.service
 systemctl restart sshd.service
 
 printf "\xE2\x9C\x94 Services restarted and ready\n"
-printf "\xE2\x9C\x94 Apparmor disabled\n"
 printf "\xE2\x9C\x85 Setup complete\n"
