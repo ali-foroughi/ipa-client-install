@@ -93,7 +93,7 @@ while true; do
                 echo "Acquire::http { Proxy \"http://$PROXY_IP:$PROXY_PORT\"; };" > /etc/apt/apt.conf.d/00proxy
                 echo "Acquire::https { Proxy \"http://$PROXY_IP:$PROXY_PORT\"; };" >> /etc/apt/apt.conf.d/00proxy
             else
-                echo "Proxy already configured."
+                printf "\xE2\x9C\x94 Proxy already configured\n"
             fi
             break;;
         [Nn]* ) echo "Continuing..."
@@ -107,8 +107,8 @@ if ! grep -rnwq $NS1 /etc/resolv.conf || ! grep -rnwq $NS2 /etc/resolv.conf
 then
     sed -i '1s/^/nameserver '$NS1'\n/' /etc/resolv.conf
     sed -i '1s/^/nameserver '$NS2'\n/' /etc/resolv.conf
-
-    echo "===> Added nameservers to /etc/resolv.conf"
+    
+    printf "\xE2\x9C\x94 Added nameservers to /etc/resolv.conf\n"
 else
     printf "\xE2\x9C\x94 Nameservers already configured\n"
 fi
