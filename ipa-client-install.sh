@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e
+
 echo "############################################"
 echo "### Configuring IPA client on Debian 11 ####"
 echo "############################################"
@@ -113,7 +116,7 @@ else
     printf "\xE2\x9C\x94 Nameservers already configured\n"
 fi
 
-check_ipa_access
+#check_ipa_access
 
 ### set hostname
 if [[ $(hostname) != "$CLIENT_NAME.$DOMAIN" ]]
@@ -271,5 +274,5 @@ ln -sf /etc/apparmor.d/usr.sbin.sssd /etc/apparmor.d/disable/
 apparmor_parser -R /etc/apparmor.d/usr.sbin.sssd
 printf "\xE2\x9C\x94 Apparmor disabled\n"
 echo ""
-printf "\xE2\x9C\x85 PAM Setup complete\n"
+printf "\xE2\x9C\x85 Setup complete\n"
 echo ""
