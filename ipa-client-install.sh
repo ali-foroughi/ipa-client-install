@@ -8,7 +8,6 @@ echo "-----------------------------------"
 echo ""
 
 #### functions ####
-DOMAIN_UP=$(echo "$DOMAIN" | tr '[:lower:]' '[:upper:]')
 
 check_failure () {
 RESULT=$?
@@ -85,6 +84,8 @@ while true; do
 done
 
 check_input
+
+DOMAIN_UP=$(echo "$DOMAIN" | tr '[:lower:]' '[:upper:]')
 
 ##### verify client name and IP adderss ### 
 echo ""
