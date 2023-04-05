@@ -7,19 +7,7 @@ echo "Configuring IPA client on Debian 11"
 echo "-----------------------------------"
 echo ""
 
-
-### These values can be changed: 
-IPA="ipa.zcore.local"
-DOMAIN="zcore.local"
-NS1=172.20.11.12
-NS2=172.20.11.11
-
 #### functions ####
-
-### ssh -o PubkeyAuthentication=yes -o PasswordAuthentication=no -o StrictHostKeyChecking=no root@ipa.zcore.local
-
-#ssh -o PubkeyAuthentication=yes -o PreferredAuthentications=publickey -o PasswordAuthentication=no -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa.pub root@ipa.zcore.local
-
 DOMAIN_UP=$(echo "$DOMAIN" | tr '[:lower:]' '[:upper:]')
 
 check_failure () {
@@ -31,7 +19,7 @@ fi
 }
 
 check_input () {
-if [ -z "$CLIENT_NAME" ] || [ -z "$CLIENT_IP" ] 
+if [ -z "$CLIENT_NAME" ] || [ -z "$CLIENT_IP" ] [ -z "$IPA" ] [ -z "$DOMAIN" ]
 then 
     echo 'Inputs cannot be blank please try again!' 
     exit 0 
@@ -67,13 +55,20 @@ check_ipa_access ()
 
 #### Ask of user to specifiy client name and IP address ###
 
+### These values can be changed: 
+
+read -p 'Enter your IPA server hostname (e.g ipa.mydomain.com): ' IPA
+read -p 'Enter your domain name (e.g mydomain.com): ' DOMAIN
+read -p 'Enter nameserver 1: ' NS1
+read -p 'Enter nameserver 2: ' NS2
 read -p 'Specifiy client name (e.g srv15-mme-1): ' CLIENT_NAME
 read -p 'Specifiy the client IP: ' CLIENT_IP
+
 check_input
 
 ##### verify client name and IP adderss ### 
 echo ""
-echo -e "Please verify the information: \nClient Name: $CLIENT_NAME \nServer IP: $CLIENT_IP"
+echo -e "Please verify the information: \n\nClient Name: $CLIENT_NAME \nServer IP: $CLIENT_IP \nIPA Server: $IPA \nDomain name: $DOMAIN"
 echo ""
 read -p "Contiue? (y/n): " INFO_VERIFY
 echo ""
