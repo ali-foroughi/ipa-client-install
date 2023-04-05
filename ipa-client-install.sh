@@ -158,8 +158,8 @@ sleep 3
 
 
 #install packages
-apt-get update
-apt-get install -y sssd sssd-tools libnss-sss libpam-sss ca-certificates krb5-user libnss3-tools libsss-sudo
+apt-get -qq update
+apt-get -qq install -y sssd sssd-tools libnss-sss libpam-sss ca-certificates krb5-user libnss3-tools libsss-sudo
 check_pkg
 
 #copy sssd file /etc/sssd/sssd.conf and make changes 
@@ -262,7 +262,6 @@ sleep 3
 
 systemctl restart sssd.service
 systemctl restart sshd.service
-systemctl restart graylog-sidecar
 
 printf "\xE2\x9C\x94 Services restarted and ready\n"
 
@@ -273,6 +272,4 @@ printf "\xE2\x9C\x94 Services restarted and ready\n"
 ln -sf /etc/apparmor.d/usr.sbin.sssd /etc/apparmor.d/disable/
 apparmor_parser -R /etc/apparmor.d/usr.sbin.sssd
 printf "\xE2\x9C\x94 Apparmor disabled\n"
-echo ""
 printf "\xE2\x9C\x85 Setup complete\n"
-echo ""
