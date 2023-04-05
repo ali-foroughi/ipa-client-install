@@ -1,6 +1,7 @@
 #!/bin/bash
-echo ""
-echo "*** Configuring IPA client on Debian 11 ***"
+echo "############################################"
+echo "### Configuring IPA client on Debian 11 ####"
+echo "############################################"
 echo ""
 
 ### These values can be changed: 
@@ -101,10 +102,7 @@ while true; do
     esac
 done
 
-check_ipa_access
-
 #add nameserver 172.20.11.12 to /etc/resolv.conf
-
 if ! grep -rnwq $NS1 /etc/resolv.conf || ! grep -rnwq $NS2 /etc/resolv.conf
 then
     sed -i '1s/^/nameserver '$NS1'\n/' /etc/resolv.conf
@@ -114,6 +112,8 @@ then
 else
     printf "\xE2\x9C\x94 Nameservers already configured\n"
 fi
+
+check_ipa_access
 
 ### set hostname
 if [[ $(hostname) != "$CLIENT_NAME.$DOMAIN" ]]
