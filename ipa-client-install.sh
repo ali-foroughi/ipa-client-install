@@ -264,12 +264,5 @@ systemctl restart sssd.service
 systemctl restart sshd.service
 
 printf "\xE2\x9C\x94 Services restarted and ready\n"
-
-#enable APT proxy
-#sed -i 's/#Acquire/Acquire/g' /etc/apt/apt.conf
-
-# Disalce Apprmor notifications for SSSD
-ln -sf /etc/apparmor.d/usr.sbin.sssd /etc/apparmor.d/disable/
-apparmor_parser -R /etc/apparmor.d/usr.sbin.sssd
 printf "\xE2\x9C\x94 Apparmor disabled\n"
 printf "\xE2\x9C\x85 Setup complete\n"
