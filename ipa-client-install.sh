@@ -90,7 +90,7 @@ check_input
 echo ""
 echo -e "Please verify the information: \n\nClient Name: $CLIENT_NAME \nServer IP: $CLIENT_IP \nIPA Server: $IPA \nDomain name: $DOMAIN"
 echo ""
-read -p "Contiue? (y/n): " INFO_VERIFY
+read -p "Continue? (y/n): " INFO_VERIFY
 echo ""
 
 if [ $INFO_VERIFY == "n" ]

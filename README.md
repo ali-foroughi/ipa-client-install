@@ -5,7 +5,7 @@ This script installs SSSD, krb5 and makes required configuration to join the cli
 
 ## Requirements:
 
-- Ubuntu or Debian clinet
+- Ubuntu or Debian client
 - Client name
 - Client IP
 - Domain name used with the IPA
