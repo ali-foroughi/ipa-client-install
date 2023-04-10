@@ -102,14 +102,14 @@ fi
 
 
 #add nameserver 172.20.11.12 to /etc/resolv.conf
-if ! grep -rnwq $NS1 /etc/resolv.conf || ! grep -rnwq $NS2 /etc/resolv.conf
+if grep -q "$NS1\|$NS2" /etc/resolv.conf
 then
+    printf "\xE2\x9C\x94 Nameservers already configured\n"
+else
     sed -i '1s/^/nameserver '$NS1'\n/' /etc/resolv.conf
     sed -i '1s/^/nameserver '$NS2'\n/' /etc/resolv.conf
     
     printf "\xE2\x9C\x94 Added nameservers to /etc/resolv.conf\n"
-else
-    printf "\xE2\x9C\x94 Nameservers already configured\n"
 fi
 
 #check_ipa_access
